@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Currency Converter</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Currency Converter</h1>
+
+    <form action="#" method="post" th:action="@{/dashboard/convert}" th:object="${conversionForm}">
+        <div class="form-group">
+            <label for="inputAmount">Write value:</label>
+            <input type="number" class="form-control" id="inputAmount" th:field="*{amount}" placeholder="Enter amount" required>
+        </div>
+        <div class="form-group">
+            <label for="selectSourceCurrency">Select source currency:</label>
+            <select class="form-control" id="selectSourceCurrency" th:field="*{sourceCurrency}">
+                <option th:each="currency : ${currencies}"
+                        th:value="${currency.code}"
+                        th:text="${currency.code}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectTargetCurrency">Select target currency:</label>
+            <select class="form-control" id="selectTargetCurrency" th:field="*{targetCurrency}">
+                <option th:each="currency : ${currencies}"
+                        th:value="${currency.code}"
+                        th:text="${currency.code}">
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Convert</button>
+    </form>
+
+    <div class="form-group mt-3">
+        <label for="convertedValue">Converted value:</label>
+        <input type="text" class="form-control" id="convertedValue" th:value="${convertedValue}" readonly>
+    </div>
+
+    <h2>Currency Rates</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Nominal</th>
+            <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="currency : ${currencies}">
+            <td th:text="${currency.code}">Code</td>
+            <td th:text="${currency.name}">Name</td>
+            <td th:text="${currency.nominal}">Nominal</td>
+            <td th:text="${currency.value}">Value</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
