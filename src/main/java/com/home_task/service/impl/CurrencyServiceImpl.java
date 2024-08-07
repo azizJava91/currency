@@ -13,6 +13,7 @@ import com.home_task.mapper.Mapper;
 import com.home_task.repository.CurrencyRepository;
 import com.home_task.repository.UserRepository;
 import com.home_task.service.interfaces.CurrencyService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         return response;
     }
 
+
+    @Transactional
     @Override
     public Response<List<RespCurrency>> getCurrencyList(ReqCurrency reqCurrency) {
         Response response = new Response<>();

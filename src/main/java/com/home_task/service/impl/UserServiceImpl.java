@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
             RespUser respUser = RespUser.builder()
                     .loginInfo(EnumMailNotificationPermissionInfo.NEGATIVE.value)
                     .build();
-            if (reqUser.getMailNotificationPermission().equals("yes")) {
+            if (reqUser.getMailNotificationPermission()) {
                 respUser.setLoginInfo(EnumMailNotificationPermissionInfo.POSITIVE.value);
             }
             response.setT(respUser);

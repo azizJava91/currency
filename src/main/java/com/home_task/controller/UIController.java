@@ -1,32 +1,79 @@
 package com.home_task.controller;
-
-
+import com.home_task.cbar.CBAR;
 import com.home_task.dto.ConversionForm;
-import com.home_task.dto.request.ReqCurrency;
+import com.home_task.dto.request.ReqUser;
 import com.home_task.dto.response.RespCurrency;
-import com.home_task.service.interfaces.CurrencyService;
+import com.home_task.entity.CurrencyEntity;
+import com.home_task.entity.UserEntity;
+import com.home_task.mapper.Mapper;
+import com.home_task.repository.CurrencyRepository;
+import com.home_task.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/dashboard")
+@RequestMapping()
 
 public class UIController {
-    private final CurrencyService currencyService;
+    private final UserRepository userRepository;
+    private final CurrencyRepository currencyRepository;
+    private final Mapper mapper;
+    private final CBAR cbar;
 
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login"; // login.html sayfasına yönlendir
+    }
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute ReqUser reqUser, Model model) {
+
+        UserEntity userEntity = userRepository.findByMailAndPassword(reqUser.getMail(), reqUser.getPassword());
+        if (userEntity == null) {
+            model.addAttribute("errorMessage", "İstifadəçi adı və ya mail yanlışdır");
+            return "login";
+        }
+
+        return "redirect:/currencies";
+    }
+
+    @GetMapping("/create-account")
+    public String showCreateAccountPage(Model model) {
+        model.addAttribute("reqUser", new ReqUser()); // Boş bir ReqUser nesnesi oluştur
+        return "create-account";
+    }
+
+    @PostMapping("/create-account")
+    public String createAccount(@ModelAttribute ReqUser reqUser, Model model) {
+        UserEntity user = userRepository.findByMail(reqUser.getMail());
+        if (user != null) {
+            model.addAttribute("errorMessage", "Bu Mail artiq istifadə olunub");
+            return "create-account"; // Mail artık kullanılmış
+        }
+        UserEntity userEntity = UserEntity.builder()
+                .mail(reqUser.getMail())
+                .password(reqUser.getPassword())
+                .mailNotificationPermission(reqUser.getMailNotificationPermission())
+                .build();
+        userRepository.save(userEntity);
+        return "redirect:/currencies"; // Başarılı kayıt olduğunda currencies sayfasına yönlendir
+    }
 
     @GetMapping("/currencies")
-    public String getCurrencies(Model model) {
-        ReqCurrency reqCurrency = new ReqCurrency();
-        reqCurrency.setMail("aziz@mail.com");
-        reqCurrency.setPassword("12345");
-        List<RespCurrency> currencies = currencyService.getCurrencyList(reqCurrency).getT();
+    public String getCurrencies(Model model) throws IOException {
+
+        List<CurrencyEntity> currencyEntities = currencyRepository.findAll();
+        if (currencyEntities.isEmpty()) {
+            cbar.updateCurrencyes();
+        }
+        List<RespCurrency> currencies = mapper.fromCurrencyEntityListToRespCurrencyList(currencyRepository.findAll());
         model.addAttribute("currencies", currencies);
         model.addAttribute("conversionForm", new ConversionForm());
 
@@ -35,10 +82,8 @@ public class UIController {
 
     @PostMapping("/convert")
     public String convertCurrency(@ModelAttribute ConversionForm conversionForm, Model model) {
-        ReqCurrency reqCurrency = new ReqCurrency();
-        reqCurrency.setMail("aziz@mail.com");
-        reqCurrency.setPassword("12345");
-        List<RespCurrency> currencies = currencyService.getCurrencyList(reqCurrency).getT();
+        List<RespCurrency> currencies = mapper.fromCurrencyEntityListToRespCurrencyList(currencyRepository.findAll());
+
 
         double sourceRate = findCurrencyRate(currencies, conversionForm.getSourceCurrency());
         double targetRate = findCurrencyRate(currencies, conversionForm.getTargetCurrency());

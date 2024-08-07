@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hesab yarat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .create-account-container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.98);
+      width: 300px;
+      text-align: center;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #cbcce1;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error-message {
+      color: #a10808;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="create-account-container">
+  <form action="/create-account" method="post">
+    <h2>Yeni Hesab Yaradın</h2>
+    <div class="input-group">
+      <label for="mail">E-poçt</label>
+      <input type="email" id="mail" name="mail" required>
+    </div>
+    <div class="input-group">
+      <label for="password">Şifrə</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+    <div class="input-group">
+      <input type="checkbox" id="mailNotificationPermission" name="mailNotificationPermission" value=true>
+      <label for="mailNotificationPermission">E-poçt göndərmə icazəsi</label>
+    </div>
+    <button type="submit">Hesab yarat</button>
+  </form>
+  <p th:text="${errorMessage}" class="error-message"></p> <!-- Hata mesajını göster -->
+</div>
+</body>
+</html>

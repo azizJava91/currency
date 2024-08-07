@@ -1,7 +1,4 @@
 package com.home_task.entity;
-
-
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +20,5 @@ public class UserEntity {
     private Long userId;
     private String mail;
     private String password;
-    private String mailNotificationPermission;
+    private Boolean mailNotificationPermission;
 }

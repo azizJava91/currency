@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Currency Converter</title>
+    <title>Valyuta Məzənnəsi</title>
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
-    <h1>Currency Converter</h1>
+    <h1>Valyuta Məzənnəsi</h1>
 
-    <form action="#" method="post" th:action="@{/dashboard/convert}" th:object="${conversionForm}">
+    <form action="#" method="post" th:action="@{/convert}" th:object="${conversionForm}">
         <div class="form-group">
-            <label for="inputAmount">Write value:</label>
-            <input type="number" class="form-control" id="inputAmount" th:field="*{amount}" placeholder="Enter amount" required>
+            <label for="inputAmount">Məbləği daxil edin</label>
+            <input type="number" class="form-control" id="inputAmount" th:field="*{amount}" placeholder="Enter amount" value="1"
+                   required>
         </div>
         <div class="form-group">
-            <label for="selectSourceCurrency">Select source currency:</label>
+            <label for="selectSourceCurrency">Hədəf valyutasını seçin</label>
             <select class="form-control" id="selectSourceCurrency" th:field="*{sourceCurrency}">
                 <option th:each="currency : ${currencies}"
                         th:value="${currency.code}"
@@ -23,7 +24,7 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="selectTargetCurrency">Select target currency:</label>
+            <label for="selectTargetCurrency">Əsas valyutanı seçin</label>
             <select class="form-control" id="selectTargetCurrency" th:field="*{targetCurrency}">
                 <option th:each="currency : ${currencies}"
                         th:value="${currency.code}"
@@ -31,22 +32,22 @@
                 </option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Convert</button>
+        <button type="submit" class="btn btn-primary">Valyutanı çevir</button>
     </form>
 
     <div class="form-group mt-3">
-        <label for="convertedValue">Converted value:</label>
+        <label for="convertedValue">Müqayisə məzənnəsi</label>
         <input type="text" class="form-control" id="convertedValue" th:value="${convertedValue}" readonly>
     </div>
 
-    <h2>Currency Rates</h2>
+    <h2>Valyuta məzənnələri (1 AZN)</h2>
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Code</th>
-            <th>Name</th>
+            <th>Kod</th>
+            <th>Ad</th>
             <th>Nominal</th>
-            <th>Value</th>
+            <th>Miqdar</th>
         </tr>
         </thead>
         <tbody>

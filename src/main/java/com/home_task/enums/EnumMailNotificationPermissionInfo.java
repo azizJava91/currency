@@ -9,6 +9,6 @@ public enum EnumMailNotificationPermissionInfo {
     POSITIVE("Registration is successfully! The exchange rate will be sent to your email address every day"),
     NEGATIVE("Registration is successfully!");
 
-    public String value;
+    public final String value;
 
 }

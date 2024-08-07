@@ -5,5 +5,5 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum CBAR_URL {
     URL("https://cbar.az/currencies/");
-    public String value;
+    public final String value;
 }
