@@ -77,9 +77,6 @@ public class CBARImpl implements CBAR {
                 throw new CurrencyException(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
             }
 
-        } catch (CurrencyException ce) {
-            ce.printStackTrace();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

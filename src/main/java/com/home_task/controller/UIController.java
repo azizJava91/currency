@@ -74,7 +74,7 @@ public class UIController {
         if (currencyEntities.isEmpty()) {
            currencyEntities = cbar.updateCurrencyes();
            currencies= mapper.fromCurrencyEntityListToRespCurrencyList(currencyEntities);
-            System.out.println("bos cixdi");
+
         }
         model.addAttribute("currencies", currencies);
         model.addAttribute("conversionForm", new ConversionForm());
