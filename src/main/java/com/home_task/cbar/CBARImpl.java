@@ -2,8 +2,6 @@ package com.home_task.cbar;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.home_task.dto.response.RespStatus;
-import com.home_task.dto.response.Response;
 import com.home_task.entity.CurrencyEntity;
 import com.home_task.enums.CBAR_URL;
 import com.home_task.exception.CurrencyException;
@@ -29,8 +27,8 @@ public class CBARImpl implements CBAR {
     private final CurrencyRepository currencyRepository;
 
     @Override
-    public void updateCurrencyes() {
-        Response response = new Response<>();
+    public List<CurrencyEntity> updateCurrencyes() {
+        List<CurrencyEntity> returnList = new ArrayList<>();
         Date today = new Date();
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String dateText = dateFormat.format(today) + ".xml";
@@ -73,19 +71,19 @@ public class CBARImpl implements CBAR {
                     currencyEntities.sort(Comparator.comparing(CurrencyEntity::getValue).reversed());
                     currencyRepository.deleteAll();
                     currencyRepository.saveAll(currencyEntities);
+                    returnList = currencyEntities;
                 }
-
             } else {
                 throw new CurrencyException(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
             }
 
         } catch (CurrencyException ce) {
             ce.printStackTrace();
-            response.setRespons_Status(new RespStatus(ce.getCode(), ce.getMessage()));
+
         } catch (Exception e) {
             e.printStackTrace();
-            response.setRespons_Status(new RespStatus(ExceptionConstants.INTERNAL_EXCEPTION, "internal exception"));
         }
+        return returnList;
     }
 }
 

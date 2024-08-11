@@ -29,7 +29,7 @@ public class UIController {
 
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login"; // login.html sayfasına yönlendir
+        return "login";
     }
 
     @PostMapping("/login")
@@ -46,7 +46,7 @@ public class UIController {
 
     @GetMapping("/create-account")
     public String showCreateAccountPage(Model model) {
-        model.addAttribute("reqUser", new ReqUser()); // Boş bir ReqUser nesnesi oluştur
+        model.addAttribute("reqUser", new ReqUser());
         return "create-account";
     }
 
@@ -55,7 +55,7 @@ public class UIController {
         UserEntity user = userRepository.findByMail(reqUser.getMail());
         if (user != null) {
             model.addAttribute("errorMessage", "Bu Mail artiq istifadə olunub");
-            return "create-account"; // Mail artık kullanılmış
+            return "create-account";
         }
         UserEntity userEntity = UserEntity.builder()
                 .mail(reqUser.getMail())
@@ -63,17 +63,19 @@ public class UIController {
                 .mailNotificationPermission(reqUser.getMailNotificationPermission())
                 .build();
         userRepository.save(userEntity);
-        return "redirect:/currencies"; // Başarılı kayıt olduğunda currencies sayfasına yönlendir
+        return "redirect:/currencies";
     }
 
     @GetMapping("/currencies")
     public String getCurrencies(Model model) throws IOException {
 
-        List<CurrencyEntity> currencyEntities = currencyRepository.findAll();
+        List<CurrencyEntity> currencyEntities =currencyRepository.findAll();
+        List<RespCurrency> currencies = mapper.fromCurrencyEntityListToRespCurrencyList(currencyEntities);
         if (currencyEntities.isEmpty()) {
-            cbar.updateCurrencyes();
+           currencyEntities = cbar.updateCurrencyes();
+           currencies= mapper.fromCurrencyEntityListToRespCurrencyList(currencyEntities);
+            System.out.println("bos cixdi");
         }
-        List<RespCurrency> currencies = mapper.fromCurrencyEntityListToRespCurrencyList(currencyRepository.findAll());
         model.addAttribute("currencies", currencies);
         model.addAttribute("conversionForm", new ConversionForm());
 

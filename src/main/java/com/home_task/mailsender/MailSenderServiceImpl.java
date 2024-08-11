@@ -33,10 +33,12 @@ public class MailSenderServiceImpl implements MailSenderService {
                         .map(UserEntity::getMail)
                         .toList();
                 List<CurrencyEntity> currencyEntities = currencyRepository.findAll();
+                List<RespCurrency> respCurrencyList = mapper.fromCurrencyEntityListToRespCurrencyList(currencyEntities);
+
                 if(currencyEntities.isEmpty()){
-                    cbar.updateCurrencyes();
+                   currencyEntities = cbar.updateCurrencyes();
+                   respCurrencyList = mapper.fromCurrencyEntityListToRespCurrencyList(currencyEntities);
                 }
-                List<RespCurrency> respCurrencyList = mapper.fromCurrencyEntityListToRespCurrencyList(currencyRepository.findAll());
                 MimeMessage mimeMessage = javaMailSender.createMimeMessage();
                 MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
 
