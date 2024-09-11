@@ -42,9 +42,10 @@ public class UIController {
         if (userEntity == null) {
             model.addAttribute("errorMessage", "İstifadəçi adı və ya mail yanlışdır");
             return "login";
+        } else {
+            request.getSession().setAttribute("user", userEntity);
+            return "redirect:/currencies";
         }
-        request.getSession().setAttribute("user", userEntity);
-        return "redirect:/currencies";
     }
 
     @GetMapping("/create-account")
