@@ -8,7 +8,8 @@ import java.util.List;
 
 @org.mapstruct.Mapper(componentModel = "spring")
 public interface Mapper {
-RespCurrency fromEntityToResponse (CurrencyEntity currencyEntity);
-List<RespCurrency> fromCurrencyEntityListToRespCurrencyList (List<CurrencyEntity> currencyEntities);
+    RespCurrency fromEntityToResponse(CurrencyEntity currencyEntity);
+
+    List<RespCurrency> fromCurrencyEntityListToRespCurrencyList(List<CurrencyEntity> currencyEntities);
 
 }

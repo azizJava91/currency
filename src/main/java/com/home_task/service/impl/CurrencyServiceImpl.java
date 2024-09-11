@@ -13,6 +13,7 @@ import com.home_task.mapper.Mapper;
 import com.home_task.repository.CurrencyRepository;
 import com.home_task.repository.UserRepository;
 import com.home_task.service.interfaces.CurrencyService;
+import com.home_task.util.Util;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final Mapper mapper;
     private final CBAR cbar;
     private final UserRepository userRepository;
+    private final Util util;
 
     @Override
     public Response<RespCurrency> compare(ReqCurrency reqCurrency) {
@@ -39,6 +41,9 @@ public class CurrencyServiceImpl implements CurrencyService {
             if (userEntity == null) {
                 throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "Username or password is incorrect");
             }
+
+            util.checkToken(reqCurrency.getReqToken(), reqCurrency.getMail());
+
             if (reqCurrency.getFromCode() == null || reqCurrency.getQuantity() == null) {
                 throw new CurrencyException(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data, fields required ");
             }
@@ -80,6 +85,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             if (userentity == null) {
                 throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "Username or password is incorrect");
             }
+            util.checkToken(reqCurrency.getReqToken(), reqCurrency.getMail());
+
             List<CurrencyEntity> currencyEntities = currencyRepository.findAll();
             if (currencyEntities.isEmpty()) {
                 cbar.updateCurrencyes();

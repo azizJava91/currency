@@ -1,6 +1,4 @@
 package com.home_task.cbar;
-
-import com.home_task.dto.response.Response;
 import com.home_task.entity.CurrencyEntity;
 
 import java.io.IOException;

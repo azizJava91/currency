@@ -11,6 +11,11 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findByMailAndPassword(String mail, String password);
-     UserEntity findByMail(String mail);
-     List<UserEntity> findAllByMailNotificationPermission(Boolean permit);
+
+    UserEntity findByMail(String mail);
+
+    List<UserEntity> findAllByMailNotificationPermission(Boolean permit);
+
+
 }
+

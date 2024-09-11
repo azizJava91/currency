@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,23 +31,6 @@ public class UIController {
     private final Mapper mapper;
     private final CBAR cbar;
 
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String login(@ModelAttribute ReqUser reqUser, Model model, HttpServletRequest request) {
-
-        UserEntity userEntity = userRepository.findByMailAndPassword(reqUser.getMail(), reqUser.getPassword());
-        if (userEntity == null) {
-            model.addAttribute("errorMessage", "İstifadəçi adı və ya mail yanlışdır");
-            return "login";
-        } else {
-            request.getSession().setAttribute("user", userEntity);
-            return "redirect:/currencies";
-        }
-    }
 
     @GetMapping("/create-account")
     public String showCreateAccountPage(Model model) {
@@ -71,6 +55,34 @@ public class UIController {
         return "redirect:/currencies";
     }
 
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
+    }
+
+    @PostMapping("/login")
+    public String login(@ModelAttribute ReqUser reqUser, Model model, HttpServletRequest request) {
+
+        UserEntity userEntity = userRepository.findByMailAndPassword(reqUser.getMail(), reqUser.getPassword());
+        if (userEntity == null) {
+            model.addAttribute("errorMessage", "İstifadəçi adı və ya mail yanlışdır");
+            return "login";
+        } else {
+            request.getSession().setAttribute("user", userEntity);
+            return "redirect:/currencies";
+        }
+    }
+
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        request.getSession().invalidate();
+        redirectAttributes.addFlashAttribute("logoutMessage", "Uğurla log out etdiniz!");
+
+        return "redirect:/login";
+    }
+
+
     @GetMapping("/currencies")
     public String getCurrencies(Model model, HttpServletRequest request) throws IOException {
         UserEntity userEntity = (UserEntity) request.getSession().getAttribute("user");
@@ -91,18 +103,19 @@ public class UIController {
         }
     }
 
-
-    @PostMapping("/convert")
+    @RequestMapping(value = "/convert", method = {RequestMethod.GET, RequestMethod.POST})
     public String convertCurrency(@ModelAttribute ConversionForm conversionForm, Model model) {
         List<RespCurrency> currencies = mapper.fromCurrencyEntityListToRespCurrencyList(currencyRepository.findAll());
 
+        if (conversionForm.getAmount() > 0) {
+            double sourceRate = findCurrencyRate(currencies, conversionForm.getSourceCurrency());
+            double targetRate = findCurrencyRate(currencies, conversionForm.getTargetCurrency());
 
-        double sourceRate = findCurrencyRate(currencies, conversionForm.getSourceCurrency());
-        double targetRate = findCurrencyRate(currencies, conversionForm.getTargetCurrency());
+            double convertedValue = (conversionForm.getAmount() * targetRate) / sourceRate;
+            model.addAttribute("convertedValue", convertedValue);
+        }
 
-        double convertedValue = (conversionForm.getAmount() * targetRate) / sourceRate;
         model.addAttribute("currencies", currencies);
-        model.addAttribute("convertedValue", convertedValue);
         model.addAttribute("conversionForm", conversionForm);
 
         return "currencies";

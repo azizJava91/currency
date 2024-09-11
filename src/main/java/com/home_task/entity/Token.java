@@ -8,23 +8,22 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
-
-
-
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "token")
 @DynamicInsert
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEntity {
+public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    private String mail;
-    private String password;
-    @ColumnDefault(value = "false")
-    private Boolean mailNotificationPermission;
+    private Long tokenId;
+    private String token;
+    @ColumnDefault(value = "1")
+    private Integer active;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private UserEntity userEntity;
 
 }

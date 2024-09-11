@@ -1,91 +1,99 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Giriş Səhifəsi</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+    <title>Giriş Səhifəsi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    .login-container {
-      background-color: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      width: 300px;
-      text-align: center;
-    }
+        .login-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
 
-    .input-group {
-      margin-bottom: 15px;
-    }
+        .input-group {
+            margin-bottom: 15px;
+        }
 
-    label {
-      display: block;
-      font-weight: bold;
-    }
+        label {
+            display: block;
+            font-weight: bold;
+        }
 
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-    button {
-      background-color: #007bff;
-      color: #ffffff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-    button:hover {
-      background-color: #0056b3;
-    }
+        button:hover {
+            background-color: #0056b3;
+        }
 
-    .error-message {
-      color: #ff0000;
-      font-size: 14px;
-    }
+        .error-message {
+            color: #ff0000;
+            font-size: 14px;
+        }
 
-    hr {
-      margin: 15px 0;
-      border: none;
-      border-top: 1px solid #ccc;
-    }
+        .logout-message {
+            color: darkgreen;
+            font-weight: bold;
+        }
 
-    a {
-      text-decoration: none;
-      color: #007bff;
-    }
-  </style>
+        hr {
+            margin: 15px 0;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
 <div class="login-container">
-  <form action="/login" method="post">
-    <h2>Giriş et</h2>
-    <div class="input-group">
-      <label for="username">E-poçt</label>
-      <input type="text" id="username" name="mail" required>
-    </div>
-    <div class="input-group">
-      <label for="password">Şifrə</label>
-      <input type="password" id="password" name="password" required>
-    </div>
-    <button type="submit">Giriş et</button>
-  </form>
-  <p th:text="${errorMessage}" class="error-message"></p>
-  <hr>
-  <a href="/create-account">Yeni Hesab Yaradın</a>
+    <form action="/login" method="post">
+        <h2>Giriş et</h2>
+        <div th:if="${logoutMessage}" class="alert alert-success logout-message" role="alert">
+            <p th:text="${logoutMessage}"></p>
+        </div>
+        <div class="input-group">
+            <label for="username">E-poçt</label>
+            <input type="text" id="username" name="mail" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Şifrə</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Giriş et</button>
+    </form>
+    <p th:text="${errorMessage}" class="error-message"></p>
+    <hr>
+    <a href="/create-account">Yeni Hesab Yaradın</a>
 </div>
 </body>
 </html>

@@ -7,11 +7,16 @@
 <body>
 <div class="container">
     <h1>Valyuta Məzənnəsi</h1>
-
+    <div class="text-right">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-danger">Log Out</button>
+        </form>
+    </div>
     <form action="#" method="post" th:action="@{/convert}" th:object="${conversionForm}">
         <div class="form-group">
             <label for="inputAmount">Məbləği daxil edin</label>
-            <input type="number" class="form-control" id="inputAmount" th:field="*{amount}" placeholder="Enter amount" value="1"
+            <input type="number" class="form-control" id="inputAmount" th:field="*{amount}" placeholder="Enter amount"
+                   value="1"
                    required>
         </div>
         <div class="form-group">

@@ -16,4 +16,5 @@ public class ReqCurrency {
     private BigDecimal quantity;
     private String mail;
     private String password;
+    private ReqToken reqToken;
 }

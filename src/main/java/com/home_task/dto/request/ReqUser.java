@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Builder
@@ -12,5 +13,7 @@ import lombok.NoArgsConstructor;
 public class ReqUser {
     private String mail;
     private String password;
+    private ReqToken reqToken;
+    @ColumnDefault("false")
     private Boolean mailNotificationPermission;
 }

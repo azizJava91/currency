@@ -7,4 +7,8 @@ import com.home_task.dto.response.Response;
 
 public interface UserService {
     Response<RespUser> register(ReqUser reqUser);
+
+    Response<RespUser> login(ReqUser reqUser);
+
+    Response<RespUser> logOut(ReqUser reqUser);
 }

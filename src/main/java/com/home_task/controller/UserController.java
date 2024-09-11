@@ -20,7 +20,7 @@ public class UserController {
 
 //       http://localhost:8080/user/register        POST method
 
-
+    //
 //        {
 //            "mail": "aziz@mail.com",
 //            "password": "12345",
@@ -29,6 +29,16 @@ public class UserController {
     @PostMapping("/register")
     public Response<RespUser> register(@RequestBody ReqUser reqUser) {
         return userService.register(reqUser);
+    }
+
+    @PostMapping("/login")
+    public Response<RespUser> login(@RequestBody ReqUser reqUser) {
+        return userService.login(reqUser);
+    }
+
+    @PostMapping("/logOut")
+    public Response<RespUser> logOut(@RequestBody ReqUser reqUser) {
+        return userService.logOut(reqUser);
     }
 }
 
