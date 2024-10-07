@@ -14,7 +14,6 @@ import com.home_task.exception.ExceptionConstants;
 import com.home_task.repository.TokenRepository;
 import com.home_task.repository.UserRepository;
 import com.home_task.service.interfaces.UserService;
-import com.home_task.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-    private final Util util;
+
 
     public Response<RespUser> register(ReqUser reqUser) {
 
@@ -80,11 +79,11 @@ public class UserServiceImpl implements UserService {
     public Response<RespUser> login(ReqUser reqUser) {
         Response response = new Response<>();
         try {
-            UserEntity available = userRepository.findByMailAndPassword(reqUser.getMail(), reqUser.getPassword());
-            if (available == null) {
-                throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "User not found");
+            UserEntity available = available(reqUser.getMail(), reqUser.getPassword());
+            Token token = tokenRepository.findByUserEntityAndTokenAndActive(available, reqUser.getReqToken().getToken(), EnumAvailableStatus.ACTIVE.value);
+            if (token == null) {
+                throw new CurrencyException(ExceptionConstants.USER_TOKEN_NOT_FOUND, "token expired or invalid");
             }
-            Token token = util.checkToken(reqUser.getReqToken(), reqUser.getMail());
             RespUser respUser = RespUser.builder()
                     .token(token.getToken())
                     .build();
@@ -106,14 +105,12 @@ public class UserServiceImpl implements UserService {
     public Response<RespUser> logOut(ReqUser reqUser) {
         Response response = new Response<>();
         try {
-            UserEntity available = userRepository.findByMailAndPassword(reqUser.getMail(), reqUser.getPassword());
-            System.out.println(reqUser.getMail());
-            System.out.println(reqUser.getPassword());
-            if (available == null) {
-                throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "User not found");
-            }
-            Token token = util.checkToken(reqUser.getReqToken(), reqUser.getMail());
+            UserEntity available = available(reqUser.getMail(), reqUser.getPassword());
 
+            Token token = tokenRepository.findByUserEntityAndTokenAndActive(available, reqUser.getReqToken().getToken(), EnumAvailableStatus.ACTIVE.value);
+            if (token == null) {
+                throw new CurrencyException(ExceptionConstants.USER_TOKEN_NOT_FOUND, "token expired or invalid");
+            }
             token.setActive(EnumAvailableStatus.DEACTIVE.value);
             tokenRepository.save(token);
             response.setRespons_Status(RespStatus.getSuccessMessage());
@@ -127,5 +124,11 @@ public class UserServiceImpl implements UserService {
         return response;
     }
 
-
+    private UserEntity available(String mail, String password) {
+        UserEntity available =  userRepository.findByMailAndPassword(mail, password);
+        if (available == null) {
+            throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "User not found");
+        }
+        return available;
+    }
 }

@@ -1,0 +1,33 @@
+version: '3'
+services:
+  currency_db:
+    hostname: mydb
+    image: mysql:latest
+    container_name: currency_db_container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: currencyDB
+      MYSQL_USER: aziz
+      MYSQL_PASSWORD: 12345
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - currency_network
+  application:
+    image: currency:latest
+    depends_on:
+      - currency_db
+    environment:
+      DB_HOSTNAME: currency_db
+      DB_PORT: 3306
+    ports:
+      - "8080:8080"
+    networks:
+      - currency_network
+volumes:
+ db_data:
+
+networks:
+  currency_network:

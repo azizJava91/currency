@@ -6,15 +6,16 @@ import com.home_task.dto.response.RespCurrency;
 import com.home_task.dto.response.RespStatus;
 import com.home_task.dto.response.Response;
 import com.home_task.entity.CurrencyEntity;
+import com.home_task.entity.Token;
 import com.home_task.entity.UserEntity;
+import com.home_task.enums.EnumAvailableStatus;
 import com.home_task.exception.CurrencyException;
 import com.home_task.exception.ExceptionConstants;
 import com.home_task.mapper.Mapper;
 import com.home_task.repository.CurrencyRepository;
+import com.home_task.repository.TokenRepository;
 import com.home_task.repository.UserRepository;
 import com.home_task.service.interfaces.CurrencyService;
-import com.home_task.util.Util;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,19 +31,15 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final Mapper mapper;
     private final CBAR cbar;
     private final UserRepository userRepository;
-    private final Util util;
+
+    private final TokenRepository tokenRepository;
 
     @Override
     public Response<RespCurrency> compare(ReqCurrency reqCurrency) {
         Response response = new Response<>();
 
         try {
-            UserEntity userEntity = userRepository.findByMailAndPassword(reqCurrency.getMail(), reqCurrency.getPassword());
-            if (userEntity == null) {
-                throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "Username or password is incorrect");
-            }
-
-            util.checkToken(reqCurrency.getReqToken(), reqCurrency.getMail());
+            checkRequest(reqCurrency);
 
             if (reqCurrency.getFromCode() == null || reqCurrency.getQuantity() == null) {
                 throw new CurrencyException(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data, fields required ");
@@ -76,16 +73,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
 
-    @Transactional
     @Override
     public Response<List<RespCurrency>> getCurrencyList(ReqCurrency reqCurrency) {
         Response response = new Response<>();
         try {
-            UserEntity userentity = userRepository.findByMailAndPassword(reqCurrency.getMail(), reqCurrency.getPassword());
-            if (userentity == null) {
-                throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "Username or password is incorrect");
-            }
-            util.checkToken(reqCurrency.getReqToken(), reqCurrency.getMail());
+            checkRequest(reqCurrency);
 
             List<CurrencyEntity> currencyEntities = currencyRepository.findAll();
             if (currencyEntities.isEmpty()) {
@@ -104,5 +96,19 @@ public class CurrencyServiceImpl implements CurrencyService {
             response.setRespons_Status(new RespStatus(ExceptionConstants.INTERNAL_EXCEPTION, "internal exception"));
         }
         return response;
+    }
+
+    private void checkRequest(ReqCurrency reqCurrency) {
+        if (reqCurrency.getMail() == null || reqCurrency.getPassword() == null || reqCurrency.getReqToken() == null) {
+            throw new CurrencyException(ExceptionConstants.INVALID_REQUEST_DATA, "Invalid request data");
+        }
+        UserEntity userentity = userRepository.findByMailAndPassword(reqCurrency.getMail(), reqCurrency.getPassword());
+        if (userentity == null) {
+            throw new CurrencyException(ExceptionConstants.USER_NOT_FOUND, "User not found ");
+        }
+        Token token = tokenRepository.findByUserEntityAndTokenAndActive(userentity, reqCurrency.getReqToken().getToken(), EnumAvailableStatus.ACTIVE.value);
+        if (token == null) {
+            throw new CurrencyException(ExceptionConstants.USER_TOKEN_NOT_FOUND, "token expired or invalid");
+        }
     }
 }
